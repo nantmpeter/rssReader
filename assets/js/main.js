@@ -39,12 +39,21 @@ const LOADING_IMAGE = '<img src="assets/img/loading.gif">';
 	});
 
 	$(".menu").click(function(){
+		chrome.storage.local.get("feeds",function(value){
+			var html = '<ul>';
+			for(var i in value.feeds) {
+				var item = value.feeds[i];
+				html += "<li>"+item.title+"</li>";
+			}
+			html += '</ul>';
+			$(".feeds").html(html);
+		});
 		$('.page').hide();
 		$('#menu').show();
 	});
 
 	$(".search").click(function(){
-        chrome.storage.local.set({"back":""});
+        // chrome.storage.local.set({"back":""});
 		$("#search").show();
 		$('#article').hide();
 		$('#content').hide();
@@ -77,11 +86,22 @@ const LOADING_IMAGE = '<img src="assets/img/loading.gif">';
 			url = $(this).attr("feed");
 		chrome.storage.local.set({"default_url":$(this).attr("feed")});
 		chrome.storage.local.get("feeds",function(value){
+			// value = [];
 			// if(isa)
-			var feeds = value["feeds"].concat([title+"$#$"+url]);
-			var feeds = "{title:'"+title+"',url:'"+url+"'}";
-			console.log(feeds);
-			chrome.storage.local.set({"feeds":feeds});
+			// var feeds = value["feeds"].concat([title+"$#$"+url]);
+			// var feeds = "{[title:'"+title+"',url:'"+url+"']}";
+			if($.isArray(value.feeds)) {
+				var array = value.feeds;
+			}else{
+				var array = new Array();
+			}
+			var feed = new Object();
+			feed.title = title;
+			feed.url = url;
+			array.push(feed);
+			// var feeds = {[title:'"+title+"',url:'"+url+"']};
+			// console.log(feed);
+			chrome.storage.local.set({"feeds":array});
 		});
 		$.get("http://feedly.com/v3/streams/contents",{"streamId":($(this).attr("feed"))},function(data){
 				homelist(data.items);
