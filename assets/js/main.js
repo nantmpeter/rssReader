@@ -40,10 +40,10 @@ const LOADING_IMAGE = '<img src="assets/img/loading.gif">';
 
 	$(".menu").click(function(){
 		chrome.storage.local.get("feeds",function(value){
-			var html = '<ul>';
+			var html = '<ul class="am-list">';
 			for(var i in value.feeds) {
 				var item = value.feeds[i];
-				html += "<li>"+item.title+"</li>";
+				html += "<li class='feed' feed='"+item.url+"'>"+item.title+"</li>";
 			}
 			html += '</ul>';
 			$(".feeds").html(html);
@@ -74,7 +74,7 @@ const LOADING_IMAGE = '<img src="assets/img/loading.gif">';
 				        // });
 			}
 			list += "</ul>";
-			$(".loading").hide();			
+			$(".loading").hide();	
 			$("#search-content").html(list);
 		});
 	});
@@ -86,10 +86,6 @@ const LOADING_IMAGE = '<img src="assets/img/loading.gif">';
 			url = $(this).attr("feed");
 		chrome.storage.local.set({"default_url":$(this).attr("feed")});
 		chrome.storage.local.get("feeds",function(value){
-			// value = [];
-			// if(isa)
-			// var feeds = value["feeds"].concat([title+"$#$"+url]);
-			// var feeds = "{[title:'"+title+"',url:'"+url+"']}";
 			if($.isArray(value.feeds)) {
 				var array = value.feeds;
 			}else{
@@ -99,9 +95,19 @@ const LOADING_IMAGE = '<img src="assets/img/loading.gif">';
 			feed.title = title;
 			feed.url = url;
 			array.push(feed);
+			var tmp = {},
+				result = [];
+			for (var i = array.length - 1; i >= 0; i--) {
+				if(array.length - i > 10)
+					break;
+				if(!tmp[array[i].url]){
+					tmp[array[i].url] = true;
+					result.push(array[i]);
+				}
+			};
 			// var feeds = {[title:'"+title+"',url:'"+url+"']};
-			// console.log(feed);
-			chrome.storage.local.set({"feeds":array});
+			// console.log(array，result);
+			chrome.storage.local.set({"feeds":result});
 		});
 		$.get("http://feedly.com/v3/streams/contents",{"streamId":($(this).attr("feed"))},function(data){
 				homelist(data.items);
