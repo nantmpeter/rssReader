@@ -27,7 +27,7 @@ const LOADING_IMAGE = '<img src="assets/img/loading.gif">';
 		}
 		xhr.send();
 	});
-
+ 
 
 	var list = document.getElementById('content');
   	list.addEventListener('click',function(e){
