@@ -205,10 +205,8 @@ function index(){
 		$('#article-content').html("");
 		$('.page').hide();
 		$(".loading").hide();
-		$('#content').show();
+		$('#content').show(200);
 }
 
-function read(){
-		$('.page').hide();
-		$('#article').show();
-}
+function read(){         $('.page').hide();
+$('#article').show(); }
